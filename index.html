@@ -178,6 +178,76 @@ nav button.on{color:var(--fg)}nav button.on i{background:var(--pill)}
 .modes button.on{background:var(--pill)}
 .x{margin-left:auto;padding:8px}
 </style>
+
+<style>
+/* ===== GOOGLE-MAPS-STYLE ПОКРАЩЕННЯ ===== */
+:root{--acc:#00796b;--ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.34,1.4,.64,1);--tile:#f1f3f4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acc:#4db6ac;--tile:#2b2b2b}}
+:root[data-theme="dark"]{--acc:#4db6ac;--tile:#2b2b2b}
+
+/* шторка: плавніше, з легким «пружинним» виїздом, карта лишається видимою */
+.sheet{transition:transform .42s var(--ease),visibility 0s .42s;will-change:transform;box-shadow:0 -2px 16px rgba(0,0,0,.18)}
+.sheet.on{transition:transform .5s var(--spring),visibility 0s}
+#bd{transition:opacity .35s ease;background:rgba(0,0,0,.28)}
+#sheet-layers{border-radius:20px 20px 0 0;max-height:none}
+#sheet-layers .hd{background:transparent;padding:16px 20px 4px}
+#sheet-layers .hd h2{font-size:20px;font-weight:500}
+#sheet-layers .hd button{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;transition:background .2s,transform .2s}
+#sheet-layers .hd button:active{background:var(--pill);transform:scale(.9) rotate(90deg)}
+
+/* плитки */
+#sheet-layers .grid{padding:6px 16px;gap:16px 4px}
+#sheet-layers .tile{position:relative;font-size:14px;line-height:1.25;color:var(--fg);padding:2px 0 4px;border-radius:14px;transition:transform .2s var(--ease)}
+#sheet-layers .tile:active{transform:scale(.94)}
+#sheet-layers .tile i{position:relative;width:64px;height:64px;border:0;border-radius:14px;overflow:hidden;background:var(--tile);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);transition:transform .35s var(--spring),box-shadow .25s}
+#sheet-layers .tile i svg{display:block;width:100%;height:100%}
+#sheet-layers .grid.t3 .tile i{width:68px;height:68px}
+#sheet-layers .tile span{display:block;transition:color .2s}
+/* вибір: рамка кольору акценту, як у Google Maps */
+#sheet-layers .tile.on i{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--acc);transform:scale(.94)}
+#sheet-layers .tile.on span{color:var(--acc);font-weight:600}
+#sheet-layers .tile.on:not(.tp) i::after{content:"";position:absolute;right:4px;top:4px;width:18px;height:18px;border-radius:50%;background:var(--acc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/14px no-repeat;animation:pop .3s var(--spring) both}
+/* стагер-поява плиток при відкритті */
+.sheet .tile{opacity:0;transform:translateY(14px)}
+.sheet.on .tile{opacity:1;transform:none;transition:opacity .4s ease,transform .5s var(--spring);transition-delay:calc(var(--i,0)*35ms + 120ms)}
+#sheet-layers .tile.on i{transition:transform .35s var(--spring),box-shadow .25s}
+#sheet-layers .sep{height:1px;background:var(--pill);margin:14px 0 0}
+#sheet-layers .lab{font-size:18px;font-weight:500;padding:16px 20px 6px}
+
+/* ripple для кнопок */
+.rp{overflow:hidden}.rp:not(.fab){position:relative}
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.16;transform:scale(0);pointer-events:none;animation:ripple .55s ease-out forwards}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
+
+/* чіпи, FAB, навігація */
+.chip{transition:background .25s,color .25s,transform .2s var(--ease),box-shadow .2s}
+.chip:active{transform:scale(.94)}
+.chips .chip{animation:chipIn .5s var(--spring) both}
+@keyframes chipIn{from{opacity:0;transform:translateX(24px) scale(.9)}to{opacity:1;transform:none}}
+.fab{transition:transform .2s var(--ease),box-shadow .2s,background .25s}
+.fab:active{transform:scale(.92);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+#btn-layers svg{transition:transform .5s var(--spring)}
+#btn-layers:active svg{transform:rotate(-20deg) scale(.9)}
+.top{animation:dropIn .55s var(--spring) both;transition:box-shadow .25s,transform .2s var(--ease)}
+.top:active{transform:scale(.99)}
+@keyframes dropIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
+.fab{animation:fabIn .55s var(--spring) .15s both}
+@keyframes fabIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+nav i{transition:background .3s var(--ease),transform .3s var(--spring)}
+nav button:active i{transform:scale(.88)}
+nav button.on i{animation:navPop .4s var(--spring)}
+@keyframes navPop{0%{transform:scaleX(.6)}100%{transform:none}}
+nav button{transition:color .25s}
+
+/* повноекранні екрани: плавний вхід замість миттєвого */
+.scr{display:block;visibility:hidden;opacity:0;transform:translateY(16px);transition:opacity .28s ease,transform .35s var(--ease),visibility 0s .35s}
+.scr.on{visibility:visible;opacity:1;transform:none;transition:opacity .28s ease,transform .4s var(--ease),visibility 0s}
+.it{transition:background .2s}
+.it:active{background:var(--pill)}
+.view.on,.auth .view.on{animation:rise .45s var(--ease) both}
+.bar i{transition:width .8s var(--ease)}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet .tile,.scr,.chips .chip,.top,.fab{transition:none!important;animation:none!important}.sheet .tile{opacity:1;transform:none}}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -522,8 +592,21 @@ $('tgBtn').addEventListener('click',function(){
 <script>
 /* малювання */
 $('chips').innerHTML=CHIPS.map(function(c){return'<button class="chip" data-id="'+c[0]+'">'+c[1]+'</button>';}).join('');
-$('types').innerHTML=TYPES.map(function(t,i){return'<button class="tile'+(i?'':' on')+'" data-id="'+t[0]+'"><i style="background:linear-gradient(135deg,'+t[2]+')"></i>'+t[1]+'</button>';}).join('');
-$('layers').innerHTML=LAYERS.map(function(l){return'<button class="tile" data-id="'+l[0]+'"><i>'+l[2]+'</i>'+l[1]+'</button>';}).join('');
+var P={
+ def:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#f3f1ec"/><path d="M0 0h30c-6 12-4 20-14 26S0 34 0 34z" fill="#9fdcf5"/><path d="M34 0h30v30c-12-6-20-2-26-12S30 8 34 0z" fill="#b8e6c8"/><path d="M-4 46C14 40 26 44 36 30S52 12 70 14" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M-4 46C14 40 26 44 36 30S52 12 70 14" fill="none" stroke="#8da2c5" stroke-width="3" stroke-linecap="round"/><path d="M12 64c4-14 16-18 24-14" fill="none" stroke="#dcdfe3" stroke-width="3"/></svg>',
+ sat:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#6b6a5e"/><path d="M-6 8L48 70M8 -6L70 52" stroke="#9a9484" stroke-width="12"/><path d="M-6 8L48 70M8 -6L70 52" stroke="#8b8576" stroke-width="9"/><path d="M2 2L60 62" stroke="#c8c3b4" stroke-width="1.5" stroke-dasharray="5 4"/><g fill="#4a5a3c"><circle cx="8" cy="48" r="7"/><circle cx="54" cy="10" r="8"/><circle cx="58" cy="52" r="6"/><circle cx="14" cy="14" r="5"/></g></svg>',
+ ter:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#a9b09c"/><path d="M0 40L18 12l12 18 10-14 24 30v18H0z" fill="#8e977f"/><path d="M0 52L20 30l14 14 12-12 18 20v12H0z" fill="#79836a"/><path d="M6 64C18 46 30 54 38 38S44 14 56 6" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M6 64C18 46 30 54 38 38S44 14 56 6" fill="none" stroke="#d6dccb" stroke-width="2" stroke-linecap="round"/></svg>',
+ transit:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#eef0f2"/><path d="M0 34h64" stroke="#2f3bf0" stroke-width="3"/><path d="M0 42l64 0" stroke="#b03ac9" stroke-width="3"/><path d="M6 22h22" stroke="#9aa4b2" stroke-width="2"/><path d="M10 22l4-3v6z" fill="#9aa4b2"/><rect x="38" y="6" width="20" height="20" rx="5" fill="#1aa3ff"/><text x="48" y="21" text-anchor="middle" font-family="Arial" font-weight="700" font-size="16" fill="#fff">M</text><rect x="14" y="44" width="18" height="16" rx="4" fill="#1aa3ff"/><rect x="18" y="47" width="10" height="5" rx="1" fill="#fff"/><circle cx="20" cy="56" r="1.5" fill="#fff"/><circle cx="26" cy="56" r="1.5" fill="#fff"/></svg>',
+ traffic:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#e6efe9"/><path d="M26 0v24c0 6-4 8-10 8H0M38 64V40c0 0 0-8 8-8h18" fill="none" stroke="#a8b0bd" stroke-width="12"/><path d="M26 0v22c0 7-5 10-12 10H0" fill="none" stroke="#1fd18c" stroke-width="3.5"/><path d="M38 64V42c0-7 4-10 12-10h14" fill="none" stroke="#f9a825" stroke-width="3.5"/><path d="M38 64V48c0-8-4-16-14-16" fill="none" stroke="#e53935" stroke-width="3.5"/></svg>',
+ bike:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#cfeee0"/><circle cx="32" cy="32" r="20" fill="#9bdcc0"/><circle cx="32" cy="32" r="11" fill="#7fcfb0"/><path d="M0 18C14 22 22 14 30 6M64 46C48 42 44 52 38 64" fill="none" stroke="#1b7a2e" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="16" fill="none" stroke="#1b7a2e" stroke-width="3"/><path d="M46 46L64 58" stroke="#1b7a2e" stroke-width="3"/></svg>',
+ street:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#f4f4f1"/><path d="M-4 52C10 36 20 40 30 26S50 6 68 8" fill="none" stroke="#9fe0ea" stroke-width="8" stroke-linecap="round"/><path d="M-4 52C10 36 20 40 30 26S50 6 68 8" fill="none" stroke="#2f9fd6" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="20" r="6.5" fill="#ffb300"/><path d="M24 50l3-22c0-3 2-5 5-5s5 2 5 5l3 22h-5l-3-12-3 12z" fill="#ffb300"/><path d="M27 31l5 7 5-7" fill="#e58a00"/></svg>',
+ air:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#e9eff1"/><path d="M0 0h28c-4 10-2 18-12 24S0 30 0 30z" fill="#9fdcf5"/><path d="M36 64h28V36c-10 6-20 2-26 12z" fill="#c4e8d4"/><circle cx="32" cy="32" r="18" fill="#6aa534"/><g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M21 26c4-4 7 4 11 0s7 4 11 0"/><path d="M21 33c4-4 7 4 11 0s7 4 11 0"/><path d="M21 40c4-4 7 4 11 0s7 4 11 0"/></g></svg>',
+ fire:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#e9eff1"/><path d="M0 0h28c-4 10-2 18-12 24S0 30 0 30z" fill="#9fdcf5"/><path d="M36 64h28V36c-10 6-20 2-26 12z" fill="#c4e8d4"/><circle cx="32" cy="32" r="18" fill="#e53935"/><path d="M32 16c2 7 10 9 10 18a10 10 0 0 1-20 0c0-5 3-7 5-10 1 3 3 4 4 4-1-4-1-8 1-12z" fill="#fff"/></svg>',
+ b3d:'<svg viewBox="0 0 64 64"><rect width="64" height="64" fill="#f1f1ef"/><path d="M0 46c14-8 30-2 64-16v34H0z" fill="#8fd9bb"/><path d="M0 44c16-8 32-2 64-14" fill="none" stroke="#c7ced8" stroke-width="5"/><path d="M10 28l12-6 12 6v14l-12 6-12-6z" fill="#cfd3dc"/><path d="M10 28l12 6 12-6M22 34v14" fill="none" stroke="#aeb4c0" stroke-width="1.5"/><path d="M30 34l10-5 10 5v11l-10 5-10-5z" fill="#b3b8c6"/><path d="M30 34l10 5 10-5M40 39v11" fill="none" stroke="#9aa0ae" stroke-width="1.5"/></svg>'
+};
+var LP={transit:P.transit,traffic:P.traffic,bike:P.bike,street:P.street,air:P.air,fire:P.fire,'3d':P.b3d};
+$('types').innerHTML=TYPES.map(function(t,i){return'<button class="tile tp'+(i?'':' on')+'" data-id="'+t[0]+'" style="--i:'+i+'"><i>'+P[t[0]]+'</i><span>'+t[1]+'</span></button>';}).join('');
+$('layers').innerHTML=LAYERS.map(function(l,i){return'<button class="tile" data-id="'+l[0]+'" style="--i:'+(i+3)+'"><i>'+(LP[l[0]]||'')+'</i><span>'+l[1]+'</span></button>';}).join('');
 $('acts').innerHTML=ACTS.map(function(a){return'<button class="act" data-act="'+a[0]+'"><i>'+ic(a[1])+'</i>'+a[2]+'</button>';}).join('');
 $('tasks').innerHTML=TASKS.map(function(t){return'<button class="task" data-act="'+t[0]+'">'+ic(t[1])+'<span>'+t[2]+'</span><small>'+t[3]+'</small>'+ic('chev')+'</button>';}).join('');
 $('lists').innerHTML=LISTS.map(function(l){return'<button class="it" data-act="list:'+l[0]+'"><span class="c">'+ic('mark')+'</span><span class="t"><b>'+l[1]+'</b><small>Порожньо</small></span></button>';}).join('');
@@ -740,6 +823,28 @@ document.addEventListener('ui:layer',function(e){ /* e.detail.id, e.detail.on: t
 document.addEventListener('ui:locate',function(){ /* кнопка «Моє місце» */ });
 document.addEventListener('ui:route',function(e){ /* e.detail.from, .to, .mode: DRIVING | TRANSIT | WALKING | FLIGHT */ });
 document.addEventListener('ui:action',function(e){ /* e.detail.id: addplace, photo, review, profile … */ });
+</script>
+<script>
+/* ripple на кнопках */
+(function(){
+  document.addEventListener('pointerdown',function(e){
+    var b=e.target.closest('.abtn,.btn,.chip,.it,.act,.task,.go,.link,.fab');
+    if(!b||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    b.classList.add('rp');
+    var r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2,i=document.createElement('span');
+    i.className='rip';i.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+    b.appendChild(i);setTimeout(function(){i.remove();},600);
+  },{passive:true});
+  /* затемнення стежить за перетягуванням шторки */
+  var bd=document.getElementById('bd');
+  document.querySelectorAll('.sheet').forEach(function(el){
+    el.addEventListener('touchmove',function(){
+      var m=/translateY\(([\d.]+)px\)/.exec(el.style.transform||'');
+      if(m&&bd.classList.contains('on')){bd.style.opacity=Math.max(0,1-parseFloat(m[1])/el.offsetHeight);}
+    },{passive:true});
+    el.addEventListener('touchend',function(){bd.style.opacity='';});
+  });
+})();
 </script>
 </body>
 </html>
